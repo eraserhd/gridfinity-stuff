@@ -103,7 +103,7 @@ module base(gridx, gridy, gridz) {
     }
 }
 
-module center_drill_bin(sizes) {
+module center_drill_bin(sizes, angle=30.0) {
     minimum_width_used = 8.0;
     function drill_width_needed(i) =
         max(
@@ -125,24 +125,25 @@ module center_drill_bin(sizes) {
     total_drill_length_needed = maximum_drill_length();
 
     gridx = ceil(total_drill_width_needed/42.0);
-    gridy = ceil(total_drill_length_needed/42.0);
+    gridy = ceil((sin(angle) * total_drill_length_needed)/42.0);
     actual_width = gridx*42.0;
     actual_y = gridy*42.0;
     spacing = (actual_width - total_drill_width_needed) / (len(sizes) + 1);
     function offset_of_drill(i) =
         actual_width - spacing - (drill_width_left_of(i) + drill_width_needed(i)/2.0 + spacing * i);
-    gridz = 5;
 
-    angle = 60.0;
-//    difference() {
-       %base(gridx, gridy, gridz);
+    echo(cos(angle) * total_drill_length_needed);
+    gridz = 4.5; //FIXME: compute
+
+    difference() {
+       base(gridx, gridy, gridz);
        for (i = [0:len(sizes)-1]) {
            translate([offset_of_drill(i), actual_y/2.0, gridz*7])
            rotate([angle,0,0])
-           #center_drill(sizes[i], clearance=0.25);
+           center_drill(sizes[i], clearance=0.5);
        }
-    //}
+    }
 }
 
-$fn=20;
+$fn=50;
 center_drill_bin(sizes = ["1","2","3","4","5"]);
