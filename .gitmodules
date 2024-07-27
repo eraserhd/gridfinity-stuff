@@ -1,0 +1,3 @@
+[submodule "gridfinity_extended_openscad"]
+	path = gridfinity_extended_openscad
+	url = git@github.com:ostat/gridfinity_extended_openscad.git
