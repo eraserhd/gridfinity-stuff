@@ -1,3 +1,18 @@
+/*
+
+NOTES:
+
+1. The bits could be aligned on a tangent line, and Extra material could be
+removed like my favorite endmill bins.  This could make it easier to put the
+drills in and take them out.
+
+2. It would be nice to set the maximum drawer height and compute the display
+angle.
+
+3. It would be nice to label the sizes with drill number and body diameter -
+the latter so we know what collet to grab.
+
+*/
 
 /* [Setup Parameters] */
 
@@ -74,7 +89,6 @@ function center_drill_lookup(size, column) =
         ]
     )
     column ? data_in_mm[column] : data_in_mm;
-
 
 module center_drill(size, clearance = 0.0) {
   body_diameter = center_drill_lookup(size, CENTER_DRILL_BODY_DIAMETER);
