@@ -61,10 +61,10 @@ module edge_deburring_tool() {
     cylinder(h=handle_length + 10 + 8, d= 7.0);
 }
 
-module gridfinity_base(gridx, gridy, gridz, stacking_lip = true) {
+module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
     x_center_offset = (gridx * 42 - 0.5)/2.0 - 3.75;
     y_center_offset = (gridy * 42 - 0.5)/2.0 - 3.75;
-    full_width_height = gridz * 7 - 2.15 - 1.8 - 0.8;
+    full_width_height = height * 7 - 2.15 - 1.8 - 0.8;
     lip_height = 4.4;
     lip_width = 2.6;
     lip_thickness = 2;
@@ -124,10 +124,10 @@ module gridfinity_base(gridx, gridy, gridz, stacking_lip = true) {
     }
     
     if (stacking_lip) {
-        translate([gridx*42.0 - lip_inset, gridy*42.0 - lip_inset, gridz*7]) lip_side(gridy);
-        translate([lip_inset, lip_inset, gridz*7]) rotate([0,0,180]) lip_side(gridy);
-        translate([gridx*42.0 - lip_inset, lip_inset, gridz*7]) rotate([0,0,-90]) lip_side(gridx);
-        translate([lip_inset, gridy*42 - lip_inset, gridz*7]) rotate([0,0,90]) lip_side(gridx);
+        translate([gridx*42.0 - lip_inset, gridy*42.0 - lip_inset, height*7]) lip_side(gridy);
+        translate([lip_inset, lip_inset, height*7]) rotate([0,0,180]) lip_side(gridy);
+        translate([gridx*42.0 - lip_inset, lip_inset, height*7]) rotate([0,0,-90]) lip_side(gridx);
+        translate([lip_inset, gridy*42 - lip_inset, height*7]) rotate([0,0,90]) lip_side(gridx);
     }
 }
 
