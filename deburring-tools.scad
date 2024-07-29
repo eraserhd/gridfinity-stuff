@@ -73,12 +73,9 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
     module bottom_cell_layer(height, bottom_radius, top_radius) {
         radius_offset = 41.5/2.0 - 3.75;
         hull()
-        for (x = [-radius_offset, +radius_offset]) {
-            for (y = [-radius_offset, +radius_offset]) {
-                translate([x,y])
-                    cylinder(h=height, r1=bottom_radius, r2=top_radius);
-            }
-        }
+        for (x = [-radius_offset, +radius_offset])
+            for (y = [-radius_offset, +radius_offset])
+                translate([x,y]) cylinder(h=height, r1=bottom_radius, r2=top_radius);
     }
 
     module single_bottom_cell() {
@@ -90,20 +87,15 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
             bottom_cell_layer(height = 2.15, bottom_radius=1.6, top_radius=3.75);
     }
 
-    for (x = [0:gridx-1]) {
-        for (y = [0:gridy-1]) {
+    for (x = [0:gridx-1])
+        for (y = [0:gridy-1])
             translate([x*42.0, y*42.0, 0])
                 single_bottom_cell();
-        }
-    }
 
     hull()
-    for (x = [4.0, gridx * 42.0 - 4.0]) {
-        for (y = [4.0, gridy * 42.0 - 4.0]) {
-            translate([x,y, 4.75])
-                cylinder(h=full_width_height, r=3.75);
-        }
-    }
+    for (x = [4.0, gridx * 42.0 - 4.0])
+        for (y = [4.0, gridy * 42.0 - 4.0])
+            translate([x,y, 4.75]) cylinder(h=full_width_height, r=3.75);
 
     module lip_profile() {
         polygon(points=[
@@ -131,7 +123,7 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
     }
 }
 
-//TODO: Fill height
+//TODO: Lip roundover
 //TODO: blade holes
 //TODO: place for blade on handle
 //TODO: fix hole deburring handle holes
