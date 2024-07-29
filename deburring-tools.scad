@@ -69,27 +69,22 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
     lip_width = 2.6;
     outside_radius = 3.75;
 
-    module bottom_cell_layer(height, bottom_radius, top_radius) {
-        radius_offset = 41.5/2.0 - 3.75;
-        hull()
-        for (x = [-radius_offset, +radius_offset])
-            for (y = [-radius_offset, +radius_offset])
-                translate([x,y]) cylinder(h=height, r1=bottom_radius, r2=top_radius);
-    }
-
-    module single_bottom_cell() {
-        translate([+42.0/2.0, 42.0/2.0, 0.0])
-            bottom_cell_layer(height = 0.8,  bottom_radius=0.8, top_radius=1.6);
-        translate([+42.0/2.0, 42.0/2.0, 0.8])
-            bottom_cell_layer(height = 1.8,  bottom_radius=1.6, top_radius=1.6);
-        translate([+42.0/2.0, 42.0/2.0, 2.6])
-            bottom_cell_layer(height = 2.15, bottom_radius=1.6, top_radius=3.75);
+    module cell_base() {
+        module layer(z, height, bottom_radius, top_radius) {
+            hull()
+            for (x = [4.0, 42.0-4.0])
+                for (y = [4.0, 42.0-4.0])
+                    translate([x,y,z]) cylinder(h=height, r1=bottom_radius, r2=top_radius);
+        }
+        layer(z=0.0, height=0.8, bottom_radius=0.8, top_radius=1.6);
+        layer(z=0.8, height=1.8, bottom_radius=1.6, top_radius=1.6);
+        layer(z=2.6, height=2.15, bottom_radius=1.6, top_radius=3.75);
     }
 
     for (x = [0:gridx-1])
         for (y = [0:gridy-1])
             translate([x*42.0, y*42.0, 0])
-                single_bottom_cell();
+                cell_base();
 
     hull()
     for (x = [4.0, gridx * 42.0 - 4.0])
