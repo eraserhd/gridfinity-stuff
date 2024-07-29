@@ -65,7 +65,6 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
     x_center_offset = (gridx * 42 - 0.5)/2.0 - 3.75;
     y_center_offset = (gridy * 42 - 0.5)/2.0 - 3.75;
     full_width_height = height * 7 - 2.15 - 1.8 - 0.8;
-    lip_height = 4.4;
     lip_width = 2.6;
     outside_radius = 3.75;
 
