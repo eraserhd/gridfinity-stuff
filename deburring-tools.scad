@@ -66,6 +66,7 @@ module gridfinity_base(gridx, gridy, gridz, stacking_lip = true) {
     y_center_offset = (gridy * 42 - 0.5)/2.0 - 3.75;
     full_width_height = gridz * 7 - 2.15 - 1.8 - 0.8;
     lip_height = 4.4;
+    lip_width = 2.6;
     lip_thickness = 2;
     outside_radius = 3.75;
 
@@ -106,31 +107,31 @@ module gridfinity_base(gridx, gridy, gridz, stacking_lip = true) {
 
     module lip_profile() {
         polygon(points=[
-            [   0       ,   0 ],
-            [ 0.7       , 0.7 ],
-            [ 0.7       , 0.7 + 1.8 ],
-            [ 0.7 + 1.9 , 0.7 + 1.8 + 1.9 ],
-            [ 0.7 + 1.9 ,   0 ],
-            [   0       ,   0 ]
+            [ outside_radius - lip_width  ,   0 ],
+            [ outside_radius - 1.9        , 0.7 ],
+            [ outside_radius - 1.9        , 0.7 + 1.8 ],
+            [ outside_radius              , 0.7 + 1.8 + 1.9 ],
+            [ outside_radius              ,   0 ],
+            [ outside_radius - lip_width  ,   0 ]
         ]);
     }
 
-    module lip_straight(grids) {
-        rotate([90,0,0])
-            linear_extrude(grids * 42.0 - 2 * outside_radius)
-            lip_profile();
-    }
+    lip_inset = outside_radius + 0.25;
 
+    module lip_side(grids) {
+        rotate([90,0,0]) linear_extrude(grids*42.0 - 2 * lip_inset) lip_profile();
+        rotate_extrude(angle=90) lip_profile();
+    }
+    
     if (stacking_lip) {
-        // 2.6 = lip_width
-        translate([gridx*42.0 - 2.6 - 0.25, gridy*42.0 - outside_radius, gridz*7]) lip_straight(gridy);
-        translate([0.25 + 2.6, outside_radius, gridz*7]) rotate([0,0,180]) lip_straight(gridy);
-        translate([gridx*42.0 - outside_radius + 0.25, 2.6, gridz*7]) rotate([0,0,-90]) lip_straight(gridx);
-        translate([outside_radius + 0.25, gridy*42 - 2.6 - 0.25, gridz*7]) rotate([0,0,90]) lip_straight(gridx);
+        translate([gridx*42.0 - lip_inset, gridy*42.0 - lip_inset, gridz*7]) lip_side(gridy);
+        translate([lip_inset, lip_inset, gridz*7]) rotate([0,0,180]) lip_side(gridy);
+        translate([gridx*42.0 - lip_inset, lip_inset, gridz*7]) rotate([0,0,-90]) lip_side(gridx);
+        translate([lip_inset, gridy*42 - lip_inset, gridz*7]) rotate([0,0,90]) lip_side(gridx);
     }
 }
 
-//TODO: Lip
+//TODO: Fill height
 //TODO: blade holes
 //TODO: place for blade on handle
 //TODO: fix hole deburring handle holes
