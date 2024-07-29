@@ -92,13 +92,11 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
             translate([x,y, 4.75]) cylinder(h=full_width_height, r=3.75);
 
     module lip_profile() {
-        roundover_radius = 0.5;
-        roundover_x = outside_radius - roundover_radius;
-        roundover_y = 3.69 - roundover_radius;
-        function roundover_at(angle) = [
-            roundover_x + roundover_radius * sin(angle),
-            roundover_y + roundover_radius * cos(angle)
-        ];
+        function roundover_at(angle) = let (
+            radius = 0.5,
+            x = outside_radius - radius,
+            y = 3.69 - radius
+        ) [ x + radius * sin(angle), y + radius * cos(angle) ];
         polygon(points=[
             [ outside_radius - lip_width  ,   0 ],
             [ outside_radius - 1.9        , 0.7 ],
