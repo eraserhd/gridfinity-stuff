@@ -136,8 +136,6 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
 //TODO: blade holes
 //TODO: place for blade on handle
 //TODO: Extract gridfinity_base somehow
-//TODO: Thumb placement
-//TODO: Inflate cutouts by .5/1mm
 
 module deburring_tool_bin() {
     spacing = 30;
@@ -157,7 +155,12 @@ module thumb_relief() {
 }
 
 deburring_tool_bin() {
-    rotate([-90,0,0]) hole_deburring_tool();
-    translate([0,135,14]) rotate([180,0,0]) hole_deburring_head();
+    minkowski() {
+        union() {
+           translate([0,135,14]) rotate([180,0,0]) hole_deburring_head();
+           rotate([-90,0,0]) hole_deburring_tool();
+        }
+        sphere(r=0.5);
+    }
     translate([0,70,0]) thumb_relief();
 }
