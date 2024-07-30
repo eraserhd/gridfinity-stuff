@@ -143,14 +143,13 @@ module deburring_tool_bin() {
     spacing = 30;
     handle_diameter = 19;
     gridz = 3;
-
     difference() {
         gridfinity_base(1, 4, gridz, stacking_lip=true);
-
-        translate([21, 10, gridz*7])
-        rotate([-90,0,0])
-        children();
+        translate([21, 10, gridz*7]) rotate([-90,0,0]) children();
     }
 }
 
-deburring_tool_bin() hole_deburring_tool();
+deburring_tool_bin() {
+    hole_deburring_tool();
+    translate([0,-14,135]) rotate([-90,0,0]) hole_deburring_head();
+}
