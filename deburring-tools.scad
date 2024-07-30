@@ -1,11 +1,21 @@
 
 $fn = 50;
 
+module hole_deburring_head() {
+    shaft_length = 14;
+    shaft_radius = 12.1/2;
+    cylinder(h=shaft_length, r=shaft_radius);
+
+    translate([0,0, shaft_length])
+    cylinder(h=3, d=20.5);
+
+    translate([0,0, shaft_length + 3])
+    cylinder(h=11.5, d1=20.5, d2=0);
+}
+
 module hole_deburring_tool() {
     handle_length = 90.5;
     handle_radius = 19/2;
-    shaft_length = 14;
-    shaft_radius = 12.1/2;
     top_roundover_radius = 0.5;
     bottom_roundover_radius = 4;
 
@@ -26,13 +36,7 @@ module hole_deburring_tool() {
         ]);
     }
 
-    cylinder(h=handle_length + shaft_length, r=shaft_radius);
-
-    translate([0,0, 90.5 + 14])
-    cylinder(h=3, d=20.5);
-
-    translate([0,0, 90.5 + 14 + 3])
-    cylinder(h=11.5, d1=20.5, d2=0);
+    translate([0, 0, 90.5]) hole_deburring_head();
 }
 
 module edge_deburring_tool() {
@@ -120,7 +124,7 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
         rotate([90,0,0]) linear_extrude(grids*42.0 - 2 * lip_inset) lip_profile();
         rotate_extrude(angle=90) lip_profile();
     }
-    
+
     if (stacking_lip) {
         translate([gridx*42.0 - lip_inset, gridy*42.0 - lip_inset, height*7]) lip_side(gridy);
         translate([lip_inset, lip_inset, height*7]) rotate([0,0,180]) lip_side(gridy);
@@ -131,8 +135,9 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
 
 //TODO: blade holes
 //TODO: place for blade on handle
-//TODO: fix hole deburring handle holes
 //TODO: Extract gridfinity_base somehow
+//TODO: Thumb placement
+//TODO: Inflate cutouts by .5/1mm
 
 module deburring_tool_bin() {
     spacing = 30;
@@ -142,7 +147,7 @@ module deburring_tool_bin() {
     difference() {
         gridfinity_base(1, 4, gridz, stacking_lip=true);
 
-        translate([21, 15, gridz*7])
+        translate([21, 10, gridz*7])
         rotate([-90,0,0])
         children();
     }
