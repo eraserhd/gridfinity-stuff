@@ -145,11 +145,19 @@ module deburring_tool_bin() {
     gridz = 3;
     difference() {
         gridfinity_base(1, 4, gridz, stacking_lip=true);
-        translate([21, 10, gridz*7]) rotate([-90,0,0]) children();
+        translate([21, 10, gridz*7]) children();
+    }
+}
+
+module thumb_relief() {
+    hull() {
+        translate([-10,0,0]) scale([1.0,1.7,1.0]) sphere(d=15);
+        translate([+10,0,0]) scale([1.0,1.8,1.0]) sphere(d=15);
     }
 }
 
 deburring_tool_bin() {
-    hole_deburring_tool();
-    translate([0,-14,135]) rotate([-90,0,0]) hole_deburring_head();
+    rotate([-90,0,0]) hole_deburring_tool();
+    translate([0,135,14]) rotate([180,0,0]) hole_deburring_head();
+    translate([0,70,0]) thumb_relief();
 }
