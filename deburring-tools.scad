@@ -16,6 +16,14 @@ module hole_deburring_tool() {
 
         translate([handle_radius - bottom_roundover_radius, bottom_roundover_radius])
         circle(r=bottom_roundover_radius);
+
+        polygon(points=[
+            [0, 0],
+            [0, handle_length],
+            [handle_radius - top_roundover_radius, handle_length],
+            [handle_radius - bottom_roundover_radius, 0],
+            [0, 0]
+        ]);
     }
 
     cylinder(h=handle_length + shaft_length, r=shaft_radius);
@@ -140,4 +148,4 @@ module deburring_tool_bin() {
     }
 }
 
-deburring_tool_bin() edge_deburring_tool();
+deburring_tool_bin() hole_deburring_tool();
