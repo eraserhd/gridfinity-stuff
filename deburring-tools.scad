@@ -46,7 +46,6 @@ module edge_deburring_tool() {
     handle_narrow_radius = 12/2;
     top_roundover_radius = 0.5;
     bottom_roundover_radius = 4;
-    // 86 100.5
 
     rotate_extrude()
     hull() {
