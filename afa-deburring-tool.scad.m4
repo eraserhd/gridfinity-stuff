@@ -33,7 +33,7 @@ module edge_deburring_tool() {
     translate([0, 0, handle_length]) cylinder(h=10, d= 11.0);
     translate([0, 0, handle_length + 10]) cylinder(h=8, d=7.0);
     translate([0, 0, handle_length + 10 + 8 - 0.1]) cylinder(h=9.1, d=3.15);
-    translate([0, 0, handle_length + 10 + 8 + 9 + 24/2])
+    translate([0, 0, handle_length + 10 + 8 + 2 + 24/2])
         rotate([0,90,0])
         intersection() {
             cylinder(h=3.15, d=24, center=true);
@@ -43,11 +43,7 @@ module edge_deburring_tool() {
 
 m4_include(lib/gridfinity_base.scad.m4)m4_dnl
 
-//TODO: blade holes
-
 module deburring_tool_bin() {
-    spacing = 30;
-    handle_diameter = 19;
     gridz = 3;
     difference() {
         gridfinity_base(1, 4, gridz, stacking_lip=true);
