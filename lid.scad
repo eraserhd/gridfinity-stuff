@@ -4,8 +4,12 @@
  
  All parametric, so you can easily change the sizes of the handles.
  
- NOTE: this file depends on kennetek's "Gridfinity Rebuilt in OpenSCAD" code (https://github.com/kennetek/gridfinity-rebuilt-openscad).  You MUST download these files and put them in the same folder as this file for this file to run. 
-
+ This was modified from https://www.printables.com/model/645622-gridfinity-lids-with-handles ,
+ chemistbyday, to avoid needing GridFinity Rebuilt and a development build of OpenSCAD, just
+ because those are too painful for me to install on NixOS.
+ 
+ This is licensed under:
+ Creative Commons (4.0 International License) Attribution—Noncommercial—Share Alike
 */
 
 // ===== PARAMETERS ===== //
@@ -36,14 +40,6 @@ handle_height = 17.5; // NOTE: for handles that scale a little more gracefully w
 indent_radius = 15; // NOTE: if you define the handle height to vary with gridx as suggested above, replace this line with indent_radius = handle_height-2.5
 // depth of indent
 indent_depth = 1.5;
-
-/* [Base] */
-// number of divisions per 1 unit of base along the X axis. (default 1, only use integers. 0 means automatically guess the right division)
-div_base_x = 0;
-// number of divisions per 1 unit of base along the Y axis. (default 1, only use integers. 0 means automatically guess the right division)
-div_base_y = 0; 
-
-
 
 // ===== IMPLEMENTATION ===== //
 
@@ -137,5 +133,4 @@ module lid(gridx, gridy, height) {
   translate([gridx*42/2, gridy*42/2, 0]) handle();
 }
 
-lid(6,2,height);
-
+lid(gridx, gridy, height);

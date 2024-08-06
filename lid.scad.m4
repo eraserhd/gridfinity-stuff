@@ -7,6 +7,9 @@
  This was modified from https://www.printables.com/model/645622-gridfinity-lids-with-handles ,
  chemistbyday, to avoid needing GridFinity Rebuilt and a development build of OpenSCAD, just
  because those are too painful for me to install on NixOS.
+ 
+ This is licensed under:
+ Creative Commons (4.0 International License) Attribution—Noncommercial—Share Alike
 */
 
 // ===== PARAMETERS ===== //
