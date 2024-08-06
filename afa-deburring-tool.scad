@@ -101,11 +101,7 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
     }
 }
 
-//TODO: blade holes
-
 module deburring_tool_bin() {
-    spacing = 30;
-    handle_diameter = 19;
     gridz = 3;
     difference() {
         gridfinity_base(1, 4, gridz, stacking_lip=true);
