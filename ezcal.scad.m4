@@ -23,12 +23,12 @@ function bezier_curve(t_step, p0, p1, p2, p3) =
 
 caliper_outline = [
     [caliper_length, 57.15],
-    [caliper_length, 77.47 - 20.32 - scale_width],
-    [94.75, 77.47 - 20.32 - scale_width],
+    [caliper_length, 57.15 - scale_width],
+    [94.75, 57.15 - scale_width],
     
     each bezier_curve(
         0.1,
-        [94.75, 77.47 - 20.32 - scale_width],
+        [94.75, 57.15 - scale_width],
         [94.75, 38.86],
         [98.81, 31.24],
         [91.95, 28.45]
