@@ -1,0 +1,154 @@
+$fn = 50;
+
+caliper_length = 235;
+scale_width = 16;
+scale_bottom_height = 2.45;
+thumbwheel_diameter = 11.5;
+thumbwheel_position = [ 92.5, 20.32 + scale_width + thumbwheel_diameter/2 ]; // FIXME: double-check
+
+function bezier_coordinate(t, n0, n1, n2, n3) = 
+    n0 * pow((1 - t), 3) + 3 * n1 * t * pow((1 - t), 2) + 
+        3 * n2 * pow(t, 2) * (1 - t) + n3 * pow(t, 3);
+
+function bezier_point(t, p0, p1, p2, p3) = 
+    [
+        bezier_coordinate(t, p0[0], p1[0], p2[0], p3[0]),
+        bezier_coordinate(t, p0[1], p1[1], p2[1], p3[1])
+    ];
+
+
+function bezier_curve(t_step, p0, p1, p2, p3) = 
+    [for(t = [0: t_step: 1]) bezier_point(t, p0, p1, p2, p3)];
+
+
+caliper_outline = [
+    [caliper_length, 57.15],
+    [caliper_length, 77.47 - 20.32 - scale_width],
+    [94.75, 77.47 - 20.32 - scale_width],
+    
+    each bezier_curve(
+        0.1,
+        [94.75, 77.47 - 20.32 - scale_width],
+        [94.75, 38.86],
+        [98.81, 31.24],
+        [91.95, 28.45]
+    ),
+    each bezier_curve(
+        0.1,
+        [91.95, 28.45],
+        [84.84, 25.65],
+        [81.79, 32.0],
+        [81.79, 32.0]
+    ),
+    [72.65, 26.67],
+    [55.63, 33.78],
+    [29.47, 33.78],
+    [23.12, 6.86],
+    [15.50, 0.0],
+    [9.15, 6.86],
+    [1.02, 35.31],
+    [0.00, 59.44],
+    [4.32, 73.66],
+    each bezier_curve(
+        0.1,
+        [4.32, 73.66],
+        [5.08, 74.93],
+        [6.35, 76.2],
+        [7.88, 77.22]
+    ),
+    each bezier_curve(
+        0.1,
+        [7.88, 77.22],
+        [9.40, 75.95],
+        [10.42, 74.68],
+        [11.94, 72.9]
+    ),
+    [14.74, 63.75],
+    [39.63, 63.25],
+    [39.63, 71.37],
+    [48.52, 71.37],
+    [48.77, 63.5],
+    [59.69, 63.75],
+    each bezier_curve(
+        0.1,
+        [59.69, 63.75],
+        [65.03, 66.55],
+        [70.62, 66.55],
+        [76.71, 63.75]
+    ),
+    each bezier_curve(
+        0.1,
+        [76.71, 63.75],
+        [82.55, 64.77],
+        [84.08, 63.75],
+        [83.32, 57.15]
+    ),
+    [caliper_length, 57.15],
+];
+
+module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
+    x_center_offset = (gridx * 42 - 0.5)/2.0 - 3.75;
+    y_center_offset = (gridy * 42 - 0.5)/2.0 - 3.75;
+    full_width_height = height * 7 - 2.15 - 1.8 - 0.8;
+    lip_width = 2.6;
+    outside_radius = 3.75;
+
+    module cell_base() {
+        module layer(z, height, bottom_radius, top_radius) {
+            hull()
+            for (x = [4.0, 42.0-4.0])
+                for (y = [4.0, 42.0-4.0])
+                    translate([x,y,z]) cylinder(h=height, r1=bottom_radius, r2=top_radius);
+        }
+        layer(z=0.0, height=0.8, bottom_radius=0.8, top_radius=1.6);
+        layer(z=0.8, height=1.8, bottom_radius=1.6, top_radius=1.6);
+        layer(z=2.6, height=2.15, bottom_radius=1.6, top_radius=3.75);
+    }
+
+    for (x = [0:gridx-1])
+        for (y = [0:gridy-1])
+            translate([x*42.0, y*42.0, 0])
+                cell_base();
+
+    hull()
+    for (x = [4.0, gridx * 42.0 - 4.0])
+        for (y = [4.0, gridy * 42.0 - 4.0])
+            translate([x,y, 4.75]) cylinder(h=full_width_height, r=3.75);
+
+    module lip_profile() {
+        function roundover_at(angle) = let (
+            radius = 0.5,
+            x = outside_radius - radius,
+            y = 3.69 - radius
+        ) [ x + radius * sin(angle), y + radius * cos(angle) ];
+        polygon(points=[
+            [ outside_radius - lip_width  ,   0 ],
+            [ outside_radius - 1.9        , 0.7 ],
+            [ outside_radius - 1.9        , 0.7 + 1.8 ],
+            for (angle = [-45, -30, 0, 30, 45, 90]) roundover_at(angle),
+            [ outside_radius              ,   0 ],
+            [ outside_radius - lip_width  ,   0 ]
+        ]);
+    }
+
+    lip_inset = outside_radius + 0.25;
+
+    module lip_side(grids) {
+        rotate([90,0,0]) linear_extrude(grids*42.0 - 2 * lip_inset) lip_profile();
+        rotate_extrude(angle=90) lip_profile();
+    }
+
+    if (stacking_lip) {
+        translate([gridx*42.0 - lip_inset, gridy*42.0 - lip_inset, height*7]) lip_side(gridy);
+        translate([lip_inset, lip_inset, height*7]) rotate([0,0,180]) lip_side(gridy);
+        translate([gridx*42.0 - lip_inset, lip_inset, height*7]) rotate([0,0,-90]) lip_side(gridx);
+        translate([lip_inset, gridy*42 - lip_inset, height*7]) rotate([0,0,90]) lip_side(gridx);
+    }
+}
+
+module ezcal_calipers_bin() {
+    polygon(points=caliper_outline);
+    #translate(thumbwheel_position) circle(d=thumbwheel_diameter);
+}
+
+ezcal_calipers_bin();
