@@ -4,6 +4,8 @@ diameter = 100;
 cutout_depth = 7;
 gridz = 2;
 
+// https://files.printables.com/media/prints/417152/pdfs/417152-gridfinity-specification-b1e2cca5-0872-4816-b0ca-5339e5473e13.pdf
+
 module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
     x_center_offset = (gridx * 42 - 0.5)/2.0 - 3.75;
     y_center_offset = (gridy * 42 - 0.5)/2.0 - 3.75;
@@ -31,7 +33,7 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
     hull()
     for (x = [4.0, gridx * 42.0 - 4.0])
         for (y = [4.0, gridy * 42.0 - 4.0])
-            translate([x,y, 4.75]) cylinder(h=full_width_height, r=3.75);
+            translate([x,y, 4.75]) cylinder(h=full_width_height, r=outside_radius);
 
     module lip_profile() {
         function roundover_at(angle) = let (
@@ -43,7 +45,7 @@ module gridfinity_base(gridx, gridy, height, stacking_lip = true) {
             [ outside_radius - lip_width  ,   0 ],
             [ outside_radius - 1.9        , 0.7 ],
             [ outside_radius - 1.9        , 0.7 + 1.8 ],
-            for (angle = [-45, -30, 0, 30, 45, 90]) roundover_at(angle),
+            for (angle = [-45, -30, 0, 30, 45, 60, 90]) roundover_at(angle),
             [ outside_radius              ,   0 ],
             [ outside_radius - lip_width  ,   0 ]
         ]);
