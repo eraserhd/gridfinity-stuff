@@ -41,7 +41,11 @@ module vise_handle_bin() {
     gridz=3;
     difference() {
        gridfinity_base(5, 1, gridz, stacking_lip=true);
-       translate([8, 42/2, gridz*7]) vise_handle();
+       translate([8, 42/2, gridz*7]) {
+           vise_handle();
+           //thumbs
+           translate([rotaty_bit_length + 1/3*long_section_length, 0, 0]) resize([35, 35, 16.5]) sphere(d=35);
+       }
     }
 }
 
