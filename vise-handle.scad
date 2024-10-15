@@ -3,10 +3,10 @@
 ball_diameter = 25.4 + 1;
 short_section_length = 38;
 
-narrow_diameter = 11.5 + 1;
+narrow_diameter = 11.5 + 2;
 long_section_length = 104;
 
-inner_diameter = 19 + 1;
+inner_diameter = 19 + 2;
 
 rotaty_bit_length = 42;
 
@@ -30,8 +30,8 @@ module vise_handle() {
 
     intersection() {
         union() {
-            translate([20, 0, 0]) rotate([0, 90, 0]) cylinder(h=7.01, d1=27 + 1, d2=34.5 + 1);
-            translate([27, 0, 0]) rotate([0, 90, 0]) cylinder(h=25.41, d=34.5 + 1);
+            translate([20, 0, 0]) rotate([0, 90, 0]) cylinder(h=7.01, d1=27 + 1, d2=34.5 + 2);
+            translate([27, 0, 0]) rotate([0, 90, 0]) cylinder(h=25.41, d=34.5 + 2);
         }
         translate([27, 0, 0]) cube([2*25.4, 2*27, 27 + 1], center=true);
     }
