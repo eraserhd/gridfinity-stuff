@@ -5,7 +5,7 @@ bracket_length = 50;
 dovetail_thickness = 0.257 * 25.4;
 dovetail_major_length = 1.1 * 25.4;
 dovetail_minor_length = 0.92 * 25.4;
-tool_clearance_gap = 0.25;
+tool_clearance_gap = 0.6;
 tool_count = 5;
 tool_spacing = 32;
 
