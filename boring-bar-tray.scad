@@ -18,11 +18,19 @@ module gridfinity_base(gridx, gridy, height, stacking_lip=true, solid_height=und
     inside_radius = 0.8;
     lip_inset = outside_radius + 0.25;
 
-    module cell_layer(z, height, bottom_radius, top_radius) {
+    module layer(gridx, gridy, z, height, bottom_radius, top_radius, r) {
+        br = is_undef(bottom_radius) ? r : bottom_radius;
+        tr = is_undef(top_radius) ? r : top_radius;
         hull()
-        for (x = [4.0, 42.0-4.0])
-            for (y = [4.0, 42.0-4.0])
-                translate([x,y,z]) cylinder(h=height, r1=bottom_radius, r2=top_radius);
+        for (x = [4.0, gridx*42.0-4.0])
+            for (y = [4.0, gridy*42.0-4.0])
+                translate([x,y,z]) cylinder(h=height, r1=br, r2=tr);
+    }
+    module cell_layer(z, height, bottom_radius, top_radius, r) {
+        layer(gridx=1, gridy=1, z=z, height=height, bottom_radius=bottom_radius, top_radius=top_radius, r=r);
+    }
+    module base_layer(z, height, bottom_radius, top_radius, r) {
+        layer(gridx=gridx, gridy=gridy, z=z, height=height, bottom_radius=bottom_radius, top_radius=top_radius, r=r);
     }
     module cell_base() {
         cell_layer(z=0.0, height=0.8, bottom_radius=0.8, top_radius=1.6);
@@ -60,23 +68,13 @@ module gridfinity_base(gridx, gridy, height, stacking_lip=true, solid_height=und
             translate([x*42.0, y*42.0, 0])
                 cell_base();
 
-    hull()
-    for (x = [4.0, gridx * 42.0 - 4.0])
-        for (y = [4.0, gridy * 42.0 - 4.0])
-            translate([x,y, 4.75]) cylinder(h=full_width_height, r=outside_radius);
-            
+    base_layer(z=4.75, height=full_width_height, r=outside_radius);
+
     if (!is_undef(solid_height)) {
         empty_height = solid_height - full_width_height;
         difference() {
-            hull()
-            for (x = [4.0, gridx * 42.0 - 4.0])
-                for (y = [4.0, gridy * 42.0 - 4.0])
-                    translate([x,y, empty_height+full_width_height]) cylinder(h=empty_height, r=outside_radius);
-                    
-            hull()
-            for (x = [4.0, gridx * 42.0 - 4.0])
-                for (y = [4.0, gridy * 42.0 - 4.0])
-                    translate([x,y, empty_height+full_width_height]) cylinder(h=empty_height + 0.1, r=inside_radius);
+            base_layer(z=empty_height+full_width_height, height=empty_height, r=outside_radius);
+            base_layer(z=empty_height+full_width_height, height=empty_height+0.1, r=inside_radius);
         }
     }
 
@@ -115,4 +113,3 @@ module boring_bar_tray() {
 }
 
 boring_bar_tray();
-

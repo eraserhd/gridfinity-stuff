@@ -35,4 +35,3 @@ module boring_bar_tray() {
 }
 
 boring_bar_tray();
-
