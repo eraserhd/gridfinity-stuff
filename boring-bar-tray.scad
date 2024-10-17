@@ -1,10 +1,9 @@
 $fn = 50;
-shank_diameter = 3/8 * 25.4;
+shank_diameter = 1/2 * 25.4;
 
-count = 8;
+count = 10;
 minimum_spacing = 5;
-longest = 3.5 * 25.4;
-shortest = 34 + 18;
+longest = 4 * 25.4;
 
 // https://files.printables.com/media/prints/417152/pdfs/417152-gridfinity-specification-b1e2cca5-0872-4816-b0ca-5339e5473e13.pdf
 

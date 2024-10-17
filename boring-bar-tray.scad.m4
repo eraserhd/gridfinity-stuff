@@ -1,10 +1,9 @@
 $fn = 50;
-shank_diameter = 3/8 * 25.4;
+shank_diameter = 1/2 * 25.4;
 
-count = 8;
+count = 10;
 minimum_spacing = 5;
-longest = 3.5 * 25.4;
-shortest = 34 + 18;
+longest = 4 * 25.4;
 
 m4_include(lib/gridfinity_base.scad.m4)m4_dnl
 
