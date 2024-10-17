@@ -15,7 +15,7 @@ module boring_bar_tray() {
     gridy = ceil((longest + 12) / 42);
     gridx = ceil((count * shank_diameter + (count + 1) * minimum_spacing)/42);
     gridz = ceil((minimum_distance_from_bottom + shank_diameter)/7);
-    
+
     actual_distance_from_bottom = gridz*7 - shank_diameter/2;
     actual_spacing = (gridx*42 - 0.5 - shank_diameter*count) / (count + 1);
     actual_length = gridy*42 - 2*actual_spacing;
@@ -31,6 +31,12 @@ module boring_bar_tray() {
         ])
         rotate([-90, 0, 0])
         cylinder(d=shank_diameter + 0.5, h=actual_length);
+
+        hull()
+        for (x = [5, gridx*42-5])
+        translate([x, gridy*42*1/2, actual_distance_from_bottom])
+        resize([4, 25.4, shank_diameter+0.5])
+        sphere(d=10);
     }
 }
 
