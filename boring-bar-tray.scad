@@ -15,7 +15,7 @@ module gridfinity_base(gridx, gridy, height, stacking_lip=true, solid_height=und
     full_width_height = (is_undef(solid_height) ? height*7 : solid_height) - 2.15 - 1.8 - 0.8;
     lip_width = 2.6;
     outside_radius = 3.75;
-    inside_radius = 0.8;
+    inside_radius = outside_radius - lip_width;
     lip_inset = outside_radius + 0.25;
 
     module layer(gridx, gridy, z, height, bottom_radius, top_radius, r) {
