@@ -1,6 +1,5 @@
 $fn = 50;
 shank_diameter = 3/8 * 25.4;
-shank_length = 34;
 
 count = 8;
 minimum_spacing = 5;
