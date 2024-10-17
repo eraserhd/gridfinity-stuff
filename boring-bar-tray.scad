@@ -11,6 +11,7 @@ module gridfinity_base(gridx, gridy, height, stacking_lip=true, solid_height=und
     x_center_offset = (gridx * 42 - 0.5)/2.0 - 3.75;
     y_center_offset = (gridy * 42 - 0.5)/2.0 - 3.75;
     full_width_height = (is_undef(solid_height) ? height*7 : solid_height) - 2.15 - 1.8 - 0.8;
+    empty_height = is_undef(solid_height) ? undef : height*7 - solid_height;
     lip_width = 2.6;
     outside_radius = 3.75;
     inside_radius = outside_radius - lip_width;
@@ -68,11 +69,10 @@ module gridfinity_base(gridx, gridy, height, stacking_lip=true, solid_height=und
 
     base_layer(z=4.75, height=full_width_height, r=outside_radius);
 
-    if (!is_undef(solid_height)) {
-        empty_height = solid_height - full_width_height;
+    if (!is_undef(empty_height)) {
         difference() {
-            base_layer(z=empty_height+full_width_height, height=empty_height, r=outside_radius);
-            base_layer(z=empty_height+full_width_height, height=empty_height+0.1, r=inside_radius);
+            base_layer(z=solid_height, height=empty_height, r=outside_radius);
+            base_layer(z=solid_height, height=empty_height+0.1, r=inside_radius);
         }
     }
 
