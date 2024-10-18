@@ -2,8 +2,9 @@ $fn = 50;
 shank_diameter = 3/8 * 25.4;
 shank_clearance = 0.75;
 
-columns = 8;
-minimum_spacing = 5;
+rows = 3;
+columns = 6;
+minimum_spacing = 3;
 angle = 30;
 
 longest = 3.5 * 25.4;
@@ -12,15 +13,18 @@ drawer_height = 2.56 * 25.4;
 module _end_of_parameters() {}
 
 gridx = ceil((shank_diameter * columns + minimum_spacing * (columns + 1))/42);
-gridy = 2;
+gridy = 3;
+
 gridz = 5;
 
 m4_include(lib/gridfinity_base.scad.m4)m4_dnl
 
-module bar_cutout() {
+module end_mill_cutout() {
     actual_spacing = (gridx * 42 - columns * shank_diameter) / (columns + 1);
     bottom_height = 5.5;
     cylinder_height = (gridz*7-bottom_height) / sin(angle);
+    
+    echo("cylinder_height = ", cylinder_height);
 
     translate([
         0,
@@ -57,11 +61,18 @@ module bar_cutout() {
     assert(total_height < drawer_height);
 }
 
-module boring_bar_tray() {
+module end_mill_tray() {
     difference() {
         gridfinity_base(gridx, gridy, gridz, stacking_lip=false);
-        bar_cutout();
+
+        for (row = [0:rows-1])
+        translate([
+            0,
+            ((shank_diameter + shank_clearance) / sin(angle) + minimum_spacing) * row,
+            0,
+        ])
+        end_mill_cutout();
     }
 }
 
-boring_bar_tray();
+end_mill_tray();

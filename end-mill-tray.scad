@@ -2,8 +2,9 @@ $fn = 50;
 shank_diameter = 3/8 * 25.4;
 shank_clearance = 0.75;
 
-columns = 8;
-minimum_spacing = 5;
+rows = 3;
+columns = 6;
+minimum_spacing = 3;
 angle = 30;
 
 longest = 3.5 * 25.4;
@@ -12,7 +13,8 @@ drawer_height = 2.56 * 25.4;
 module _end_of_parameters() {}
 
 gridx = ceil((shank_diameter * columns + minimum_spacing * (columns + 1))/42);
-gridy = 2;
+gridy = 3;
+
 gridz = 5;
 
 // https://files.printables.com/media/prints/417152/pdfs/417152-gridfinity-specification-b1e2cca5-0872-4816-b0ca-5339e5473e13.pdf
@@ -99,6 +101,8 @@ module bar_cutout() {
     actual_spacing = (gridx * 42 - columns * shank_diameter) / (columns + 1);
     bottom_height = 5.5;
     cylinder_height = (gridz*7-bottom_height) / sin(angle);
+    
+    echo("cylinder_height = ", cylinder_height);
 
     translate([
         0,
@@ -138,6 +142,13 @@ module bar_cutout() {
 module boring_bar_tray() {
     difference() {
         gridfinity_base(gridx, gridy, gridz, stacking_lip=false);
+
+        for (row = [0:rows-1])
+        translate([
+            0,
+            ((shank_diameter + shank_clearance) / sin(angle) + minimum_spacing) * row,
+            0,
+        ])
         bar_cutout();
     }
 }
