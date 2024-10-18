@@ -2,20 +2,22 @@ $fn = 50;
 shank_diameter = 3/8 * 25.4;
 shank_clearance = 0.75;
 
-rows = 3;
-columns = 6;
+gridx = 2;
+gridy = 3;
+
 minimum_spacing = 3;
 angle = 30;
 
-longest = 3.5 * 25.4;
+longest_tool = 3.5 * 25.4;
 drawer_height = 2.56 * 25.4;
 
 module _end_of_parameters() {}
 
-gridx = ceil((shank_diameter * columns + minimum_spacing * (columns + 1))/42);
-gridy = 3;
-
 gridz = 5;
+rows = 3;
+columns = floor(
+    (gridx * 42 - minimum_spacing) / (shank_diameter + shank_clearance + minimum_spacing)
+);
 
 m4_include(lib/gridfinity_base.scad.m4)m4_dnl
 
@@ -54,7 +56,7 @@ module end_mill_cutout() {
 
     // Make sure it will fit in the drawer.
     total_height = bottom_height +
-                   sin(angle) * longest + 
+                   sin(angle) * longest_tool + 
                    2 * cos(angle) * (shank_diameter + shank_clearance)/2 +
                    2;
     echo("total height = ", total_height, "; drawer_height = ", drawer_height);
