@@ -1,11 +1,11 @@
 $fn = 50;
 tool_width = 3/8 * 25.4;
-shank_clearance = 0.75;
+tool_clearance = 0.75;
 
-gridx = 2;
+gridx = 1;
 gridy = 3;
 
-minimum_spacing = 3;
+minimum_spacing = 2.5;
 angle = 30;
 
 longest_tool = 3.5 * 25.4;
@@ -13,21 +13,6 @@ drawer_height = 2.56 * 25.4;
 
 module _end_of_parameters() {}
 
-gridz = 5;
-bottom_height = 5.5;
-
-tool_y_spacing = (tool_width + shank_clearance) / sin(angle) + minimum_spacing;
-
-rows = let (
-      tool_length_projection = (gridz*7 - bottom_height) / tan(angle),
-      tool_diameter_projection = sin(angle)* (tool_width + shank_clearance),
-      front_space = tool_length_projection + tool_diameter_projection + minimum_spacing,
-      remaining_y = gridy * 42 - front_space
-    ) 1 + floor(remaining_y / tool_y_spacing);
-
-columns = floor(
-    (gridx * 42 - minimum_spacing) / (tool_width + shank_clearance + minimum_spacing)
-);
 
 // https://files.printables.com/media/prints/417152/pdfs/417152-gridfinity-specification-b1e2cca5-0872-4816-b0ca-5339e5473e13.pdf
 
@@ -109,46 +94,65 @@ module gridfinity_base(gridx, gridy, height, stacking_lip=true, solid_height=und
     }
 }
 
-module end_mill_cutout() {
-    actual_spacing = (gridx * 42 - columns * tool_width) / (columns + 1);
-    cylinder_height = (gridz*7-bottom_height) / sin(angle);
+module end_mill_tray(gridx, gridy, tool_width, minimum_spacing=2.5, angle=30, tool_clearance=0.75, longest_tool, drawer_height) {
+    gridz = 5;
+    bottom_height = 5.5;
+    
+    tool_y_spacing = (tool_width + tool_clearance) / sin(angle) + minimum_spacing;
+    
+    rows = let (
+          tool_length_projection = (gridz*7 - bottom_height) / tan(angle),
+          tool_diameter_projection = sin(angle)* (tool_width + tool_clearance),
+          front_space = tool_length_projection + tool_diameter_projection + minimum_spacing,
+          remaining_y = gridy * 42 - front_space
+        ) 1 + floor(remaining_y / tool_y_spacing);
 
-    translate([
-        0,
-        sin(angle) * tool_width/2 + minimum_spacing,
-        cos(angle) * tool_width/2 + bottom_height,
-    ])
-    rotate([-90 + angle, 0, 0]) {
-        for (i = [0:columns-1])
+    columns = floor(
+        (gridx * 42 - minimum_spacing) / (tool_width + tool_clearance + minimum_spacing)
+    );
+
+
+    module end_mill_cutout() {
+        actual_spacing = (gridx * 42 - columns * tool_width) / (columns + 1);
+        cylinder_height = (gridz*7-bottom_height) / sin(angle);
+
         translate([
-            (i + 1/2) * tool_width + (i + 1)*actual_spacing,
             0,
-            0
+            sin(angle) * tool_width/2 + minimum_spacing,
+            cos(angle) * tool_width/2 + bottom_height,
         ])
-        cylinder(d=tool_width + shank_clearance, h=cylinder_height);
-        
-        translate([
-            actual_spacing + tool_width/2,
-            -(tool_width + shank_clearance)/2,
-            0
-        ])
-        cube([
-             (columns - 1) * tool_width + (columns - 1)*actual_spacing,
-             tool_width/2 + shank_clearance,
-             cylinder_height,
-        ]);
+        rotate([-90 + angle, 0, 0]) {
+            for (i = [0:columns-1])
+            translate([
+                (i + 1/2) * tool_width + (i + 1)*actual_spacing,
+                0,
+                0
+            ])
+            cylinder(d=tool_width + tool_clearance, h=cylinder_height);
+
+            translate([
+                actual_spacing + tool_width/2,
+                -(tool_width + tool_clearance)/2,
+                0
+            ])
+            cube([
+                 (columns - 1) * tool_width + (columns - 1)*actual_spacing,
+                 tool_width/2 + tool_clearance,
+                 cylinder_height,
+            ]);
+        }
+
+        // Make sure it will fit in the drawer.
+        if (!is_undef(longest_tool) && !is_undef(drawer_height)) {
+            total_height = bottom_height +
+                           sin(angle) * longest_tool + 
+                           2 * cos(angle) * (tool_width + tool_clearance)/2 +
+                           2;
+            echo("total height = ", total_height, "; drawer_height = ", drawer_height);
+            assert(total_height < drawer_height);
+        }
     }
 
-    // Make sure it will fit in the drawer.
-    total_height = bottom_height +
-                   sin(angle) * longest_tool + 
-                   2 * cos(angle) * (tool_width + shank_clearance)/2 +
-                   2;
-    echo("total height = ", total_height, "; drawer_height = ", drawer_height);
-    assert(total_height < drawer_height);
-}
-
-module end_mill_tray() {
     difference() {
         gridfinity_base(gridx, gridy, gridz, stacking_lip=false);
 
@@ -158,4 +162,13 @@ module end_mill_tray() {
     }
 }
 
-end_mill_tray();
+end_mill_tray(
+    gridx=gridx,
+    gridy=gridy,
+    tool_width=tool_width,
+    minimum_spacing=minimum_spacing,
+    angle=angle,
+    tool_clearance=tool_clearance,
+    longest_tool=longest_tool,
+    drawer_height=drawer_height
+);
