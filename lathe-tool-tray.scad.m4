@@ -1,5 +1,5 @@
 $fn = 50;
-tool_width = 5/16 * 25.4;
+tool_width = 3/8 * 25.4;
 tool_clearance = 0.75;
 
 gridx = 2;
