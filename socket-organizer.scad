@@ -30,13 +30,13 @@ If using 4 wide grid though, pay attention to label output; if you want to read 
 
 //list of hole diameter and string of label. Hole clearance gets added later, so measured diameter goes here. Order of list determines position in grid. 
 holes=[ 
-    [ 17.3, "3/8"   ],
-    [ 17.3, "7/16"  ],
-    [ 18.3, "1/2"   ],
-    [   20, "9/16"  ],
-    [   22, "5/8"   ],
-    [ 24.2, "11/16" ],
-    [ 25.6, "3/4"   ],
+    [ 17.2, "8" ],
+    [ 16.9, "10" ],
+    [ 17.2, "12"   ],
+    [ 18.2, "13"   ],
+    [ 19.5, "14"   ],
+    [ 23.4, "17"   ],
+    [ 25.7, "19"   ],
 ];
 
 depth=15; //depth of hole, should not be deeper than depth internal from gridfinity section 
@@ -51,7 +51,7 @@ length = 42; //Gridfinity base unit length (default 42, 21 works best for best u
 
 height_internal = 20; // gridfinity internal block height of bin (above 5.5mm of bottom grid section)(needs to be taller than depth (hole cut depth)
 
-hole_clearance=0.5; //oversize holes by this much. and also used for line clearance 
+hole_clearance=0.75; //oversize holes by this much. and also used for line clearance 
 
 
 {//=============Secondary Parameters (that shouldn't need changed) =============//
