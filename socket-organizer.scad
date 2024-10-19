@@ -334,6 +334,7 @@ module socket_organizer(
         points=[point1,point2,point3,point4,point5,point6];
     //    echo(points)
 
+        color("white")
         linear_extrude(height=text_depth+1)
             polygon (points);
     }
@@ -341,23 +342,25 @@ module socket_organizer(
     difference() {
         union() {
             //build gridfinity box
+            color("gray")
             translate([-gridx*42/2, -gridy*42/2, 0])
             gridfinity_base(gridx, gridy, gridz, stacking_lip=enable_lip);
 
             //build text and lines
             translate([-x_center,-y_center-y_min,height_internal]){
                 for (i =[0:len(data)-1]) {
+                    color("white")
                     translate([textpos_x(data[i]),textpos_y(data[i]),0])
-                                translate([0,center_pos(data[i][3],data)[1],0])
-                                    linear_extrude(text_depth+1){
-                                        text(data[i][1], size=text_size, valign="center", halign=text_align(textpos_x(data[i])), font=   "Arial:style=Bold");
-                                                }
-                            label_line(center_pos(data[i][3],data),textpos_x(data[i]),textpos_y(data[i]),data[i]);
+                        translate([0,center_pos(data[i][3],data)[1],0])
+                            linear_extrude(text_depth+1)
+                                text(data[i][1], size=text_size, valign="center", halign=text_align(textpos_x(data[i])), font=   "Arial:style=Bold");
+                    label_line(center_pos(data[i][3],data),textpos_x(data[i]),textpos_y(data[i]),data[i]);
                 }
             }
         }
 
         //remove cylinders and cut from label line
+        color("gray")
         translate([-x_center,-y_center-y_min,(height_internal+5.1)]) {
             for (i =[0:len(data)-1]) {
                 translate(concat(center_pos(data[i][3],data),-depth))
