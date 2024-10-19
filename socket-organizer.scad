@@ -49,7 +49,7 @@ dynamic_spacing=true; //true (no quotes) squeezes rows together as possible, fal
 
 length = 42; //Gridfinity base unit length (default 42, 21 works best for best use of space with default grid pieces)
 
-height_internal = 20; // gridfinity internal block height of bin (above 5.5mm of bottom grid section)(needs to be taller than depth (hole cut depth)
+enable_lip = true; //Whether to add the stacking lip
 
 hole_clearance=0.75; //oversize holes by this much. and also used for line clearance 
 
@@ -58,8 +58,6 @@ hole_clearance=0.75; //oversize holes by this much. and also used for line clear
 
 line_width_multiplier=3.5; //underline of text, bases on font and font size
 line_angle_multiplier=.5; //affects angle of line, is a muliplier on diamter, .5 to 1 is ideal
-
-
 
 vert_spacing=.1; //Adds vertical spacing between rows works with dynamic or normal spacing
 
@@ -73,13 +71,9 @@ text_depth=.4;
 
 line_space=2; //space between line and bottom of nearest holes, also used for overall height clearance
 
-
-
 line_thick=.8; //.8
 
 visual_clearance=0.01;  //for scad quick rendering 
-
-
 
 
 { //STUFF FROM ORIGINAL UTILITY THAT SHOULDN'T NEED TO BE TOUCHED
@@ -88,34 +82,9 @@ $fa = 8;
 $fs = 0.25;
 $fn=30;
 
-/* [Compartments] */
-// number of X Divisions
-divx = 1;
-// number of y Divisions
-divy = 1;
-// bin height. See bin height information and "gridz_define" below.  
 gridz = 3; 
+height_internal = gridz * 7; // gridfinity internal block height of bin (above 5.5mm of bottom grid section)(needs to be taller than depth (hole cut depth)
 
-
-/* [Toggles] */
-// internal fillet for easy part removal
-enable_scoop = false;
-// snap gridz height to nearest 7mm increment
-enable_zsnap = false;
-// enable upper lip for stacking other bins
-enable_lip = false;
-// the type of tabs
-style_tab = 5; //[0:Full,1:RAuto,2:Left,3:Center,4:ight,5:None]
-
-/* [Other] */
-// determine what the variable "gridz" applies to based on your use case
-gridz_define = 2; // [0:gridz is the height of bins in units of 7mm increments - Zack's method,1:gridz is the internal height in millimeters, 2:gridz is the overall external height of the bin in millimeters]
-/* [Base] */
-style_hole = 0; // [0:no holes, 1:magnet holes only, 2: magnet and screw holes - no printable slit, 3: magnet and screw holes - printable slit]
-// number of divisions per 1 unit of base along the X axis. (default 1, only use integers. 0 means automatically guess the right division)
-div_base_x = 0;
-// number of divisions per 1 unit of base along the Y axis. (default 1, only use integers. 0 means automatically guess the right division)
-div_base_y = 0; 
 }}
 
 module _end_of_parameters() {}
@@ -225,8 +194,6 @@ spacing_grid=[max_dia+lateral_spacing+hole_clearance,max_dia+spacing_adder_y+hol
 //echo("spacing",spacing_grid);
 //echo(minimum_spacing);
 
-
-
 text_column_r=(patternx-1)*(max_dia+lateral_spacing)+(max_dia/2+spacingtextx); 
 text_column_l=-(max_dia/2+spacingtextx);
 
@@ -297,11 +264,10 @@ difference(){
 union(){
 //build gridfinity box
 translate([-gridx*42/2, -gridy*42/2, 0])
-gridfinity_base(gridx, gridy, gridz);
-
+gridfinity_base(gridx, gridy, gridz, stacking_lip=enable_lip);
 
 //build text and lines
-translate([-x_center,-y_center-y_min,(height_internal+5.1-1)]){
+translate([-x_center,-y_center-y_min,height_internal]){
     for (i =[0:len(data)-1]) {
         translate([textpos_x(data[i]),textpos_y(data[i]),0])
                     translate([0,center_pos(data[i][3],data)[1],0])
@@ -420,4 +386,3 @@ function center_pos (grid_pos,list)=
 function SubSum(x=0,Index=0)=x[Index]+((Index<=0)?0:SubSum(x=x,Index=Index-1));
 function Sum(x)=SubSum(x=x,Index=len(x)-1);
 }
-
