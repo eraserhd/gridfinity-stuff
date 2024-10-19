@@ -2,7 +2,7 @@ $fn = 50;
 tool_width = 5/16 * 25.4;
 tool_clearance = 0.75;
 
-gridx = 1;
+gridx = 2;
 gridy = 3;
 
 minimum_spacing = 2.5;
