@@ -1,5 +1,3 @@
-include <gridfinity-rebuilt-utility.scad>
-
 //=============Read me=============//
 /*Original gridfinity utility here: 
 https://www.printables.com/model/274917-gridfinity-rebuilt-in-openscad
@@ -219,10 +217,7 @@ gridx = grid_x_reqd;//have to input number not formula into gridfinity modules
 difference(){
 union(){
 //build gridfinity box
-//gridfinityInit(gridx, gridy, height(gridz, gridz_define, enable_lip, enable_zsnap), height_internal, length) {
-//    cutEqual(n_divx = divx, n_divy = divy, style_tab = style_tab, enable_scoop = enable_scoop);
-//}
-//gridfinityBase(gridx, gridy, length, div_base_x, div_base_y, style_hole);
+translate([-gridx*42/2, -gridy*42/2, 0])
 gridfinity_base(gridx, gridy, gridz);
 
 

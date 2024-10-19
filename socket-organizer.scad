@@ -1,4 +1,4 @@
-include <gridfinity-rebuilt-utility.scad>
+//include <gridfinity-rebuilt-utility.scad>
 
 //=============Read me=============//
 /*Original gridfinity utility here: 
@@ -265,7 +265,7 @@ left_label= patternx==2 && text_primary_side=="right" ? 0:1;
 
 x_total=(max_dia+lateral_spacing)*(patternx-1) + max_dia + num_labels*(spacingtextx+max_label_length*line_width_multiplier);
 x_min=max_dia/2+(left_label)*(spacingtextx+max_label_length*line_width_multiplier);
-//x_center=x_total/2-x_min;
+x_center=x_total/2-x_min;
 
 //y minus is unerline point 2y/3y
 first_hole_data=data[0];
@@ -297,15 +297,12 @@ gridx = grid_x_reqd;//have to input number not formula into gridfinity modules
 difference(){
 union(){
 //build gridfinity box
-//gridfinityInit(gridx, gridy, height(gridz, gridz_define, enable_lip, enable_zsnap), height_internal, length) {
-//    cutEqual(n_divx = divx, n_divy = divy, style_tab = style_tab, enable_scoop = enable_scoop);
-//}
-//gridfinityBase(gridx, gridy, length, div_base_x, div_base_y, style_hole);
+translate([-gridx*42/2, -gridy*42/2, 0])
 gridfinity_base(gridx, gridy, gridz);
 
 
 //build text and lines
-translate([0,-y_center-y_min,(height_internal+5.1-1)]){
+translate([-x_center,-y_center-y_min,(height_internal+5.1-1)]){
     for (i =[0:len(data)-1]) {
         translate([textpos_x(data[i]),textpos_y(data[i]),0])
                     translate([0,center_pos(data[i][3],data)[1],0])
@@ -317,7 +314,7 @@ translate([0,-y_center-y_min,(height_internal+5.1-1)]){
 }
 
 //remove cylinders and cut from label line
-translate([0,-y_center-y_min,(height_internal+5.1)]){ 
+translate([-x_center,-y_center-y_min,(height_internal+5.1)]){ 
     for (i =[0:len(data)-1]) {
         translate(concat(center_pos(data[i][3],data),-depth))
             union(){
