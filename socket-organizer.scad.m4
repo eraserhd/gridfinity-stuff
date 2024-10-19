@@ -24,19 +24,18 @@ If using 4 wide grid though, pay attention to label output; if you want to read 
 
 */
 
-
 //=============PRIMARY PARAMETERS=============// 
 
 
 //list of hole diameter and string of label. Hole clearance gets added later, so measured diameter goes here. Order of list determines position in grid. 
 holes=[ 
-    [ 17.2, "8" ],
+    [ 17.2, "8"  ],
     [ 16.9, "10" ],
-    [ 17.2, "12"   ],
-    [ 18.2, "13"   ],
-    [ 19.5, "14"   ],
-    [ 23.4, "17"   ],
-    [ 25.7, "19"   ],
+    [ 17.2, "12" ],
+    [ 18.2, "13" ],
+    [ 19.5, "14" ],
+    [ 23.4, "17" ],
+    [ 25.7, "19" ],
 ];
 
 depth=15; //depth of hole, should not be deeper than depth internal from gridfinity section 
@@ -92,7 +91,7 @@ module _end_of_parameters() {}
 m4_include(lib/gridfinity_base.scad.m4)m4_dnl
 
 
-{//===Setup===
+//===Setup===
 
 assert(patternx >=2 && patternx <=4, "Pattern must be set 2-4 columns");
 assert(text_primary_side=="left" || text_primary_side=="right", "text_primary_side must be 'left' or 'right' (w/ quotes)");
@@ -177,112 +176,38 @@ gridy = grid_y_reqd; //have to input number not formula into gridfinity modules
 grid_x_reqd=ceil(x_total/length);
 gridx = grid_x_reqd;//have to input number not formula into gridfinity modules
 
-}
-
-
-{//===RUN===
-
-difference(){
-union(){
-//build gridfinity box
-translate([-gridx*42/2, -gridy*42/2, 0])
-gridfinity_base(gridx, gridy, gridz, stacking_lip=enable_lip);
-
-//build text and lines
-translate([-x_center,-y_center-y_min,height_internal]){
-    for (i =[0:len(data)-1]) {
-        translate([textpos_x(data[i]),textpos_y(data[i]),0])
-                    translate([0,center_pos(data[i][3],data)[1],0])
-                        linear_extrude(text_depth+1){
-                            text(data[i][1], size=text_size, valign="center", halign=text_align(textpos_x(data[i])), font=   "Arial:style=Bold");
-                                    }
-                label_line(center_pos(data[i][3],data),textpos_x(data[i]),textpos_y(data[i]),data[i]);
-}}
-}
-
-//remove cylinders and cut from label line
-translate([-x_center,-y_center-y_min,(height_internal+5.1)]){ 
-    for (i =[0:len(data)-1]) {
-        translate(concat(center_pos(data[i][3],data),-depth))
-            union(){
-            cylinder(depth,d=data[i][0]+hole_clearance);
-            translate([0,0,depth-visual_clearance])
-                cylinder(text_depth+visual_clearance*2,d=(data[i][0]+line_space*2));
-}}}}
-}
-
-
-{//===FUNCTIONS AND MODULES===
-
-module label_line (center,text_x, text_y,hole_data){
-    x=center[0];
-    y=center[1];
-
-    underline_len=line_width_multiplier*len(hole_data[1]);
-    dir= text_x == text_column_l ? -1:1;
-
-    point1=center;
-    
-    point2d=[x+hole_data[2]*line_angle_multiplier*dir,y+text_y-text_size/2-line_space-line_thick];
-    point2u=[text_x,y+text_y-text_size/2-line_space-line_thick];
-    point2= textpos_y(hole_data)>0 ? point2u:point2d;
-    
-    point3=[text_x+underline_len*dir,point2[1]];
-    point4=[point3[0],point3[1]+line_thick];
-    point5=[point2[0]+line_thick*line_angle_multiplier*dir,point2[1]+line_thick];
-    
-    point6=[x+line_thick*line_angle_multiplier*dir,y+line_thick];
-
-    
-    points=[point1,point2,point3,point4,point5,point6];
-//    echo(points)
-    
-    linear_extrude(height=text_depth+1)
-        polygon (points);
-}    
-
-
-function textpos_x (hole_data)=
+function textpos_x(hole_data) =
     patternx==2 ?  
         text_column_p
-        
     : patternx==3  && text_primary_side=="right" ?
         hole_data[3][0]==0 ? text_column_l : text_column_r
     : patternx==3 && text_primary_side=="left" ? 
         hole_data[3][0]>=1 ? text_column_l : text_column_r       
-        
     : patternx==4 ?
         hole_data[3][0]<=1 ? text_column_s : text_column_p
         :0;
 
-function text_align(posx)= //"left" or "right" depending on side where labels are, for alignment not pos
+function text_align(posx) = //"left" or "right" depending on side where labels are, for alignment not pos
     posx==text_column_l ? "right" : "left";
-    
-function textpos_y(hole_data)=
 
+function textpos_y(hole_data) =
     patternx==2 ? 
         hole_data[3][0]==0 ? text_offset_low(hole_data) : text_offset_high(hole_data)
-
-        
     : patternx==3  && text_primary_side=="right" ?
         hole_data[3][0]<=1 ? text_offset_low(hole_data) : text_offset_high(hole_data)
     : patternx==3  && text_primary_side=="left" ?
         hole_data[3][0]<=1 ? text_offset_low(hole_data) : text_offset_high(hole_data)   
-        
     : patternx==4 ?
         hole_data[3][0]==1 || hole_data[3][0]==2 ? text_offset_low(hole_data) : text_offset_high(hole_data)
         :0;
         
 function text_offset_high (hole_data)=
     dynamic_spacing==true ? 
-//        hole_data[2]/2-text_size/2: static_text_offset_high; //old formula, label at top of hole
         (hole_data[2]/2-text_size/2 +(-hole_data[2]/2+text_size*1.5))/2 : static_text_offset_high; //new, label centered
         
 function text_offset_low (hole_data)=
     dynamic_spacing==true ? 
         -hole_data[2]/2+text_size/2: static_text_offset_low;
-
-
 
 function grid_pos (pattern, current_pos)=
     [current_pos < pattern[0]-1 ? //column number
@@ -294,17 +219,76 @@ function grid_pos (pattern, current_pos)=
 function center_pos (grid_pos,list)=
    dynamic_spacing==true ?
         [abs(grid_pos[0]+l_r*(patternx-1))*spacing_grid[0],  
-            
-            
             //y center 
             grid_pos[1]==0 
                 ? 0
                 : //if true, do dynamic spacing for everything except first row  y
                 Sum(concat([for (b =[grid_pos[1]:-1:0]) (list[b*patternx][2]+spacing_adder_y)],(-list[grid_pos[1]*patternx][2]-spacing_adder_y)/2,(-list[0][2]-spacing_adder_y)/2))] //addition of ypos times that row's largest dia, then minus half for first and last row. 
         : [abs(grid_pos[0]+l_r*(patternx-1))*spacing_grid[0],grid_pos[1]*spacing_grid[1]]; //if false, static spacing y
- 
 
 //sum function from here: https://www.reddit.com/r/openscad/comments/j5v5pp/sumlist/    
 function SubSum(x=0,Index=0)=x[Index]+((Index<=0)?0:SubSum(x=x,Index=Index-1));
 function Sum(x)=SubSum(x=x,Index=len(x)-1);
+
+module socket_organizer() {
+
+    module label_line(center,text_x, text_y,hole_data) {
+        x=center[0];
+        y=center[1];
+    
+        underline_len=line_width_multiplier*len(hole_data[1]);
+        dir= text_x == text_column_l ? -1:1;
+    
+        point1=center;
+    
+        point2d=[x+hole_data[2]*line_angle_multiplier*dir,y+text_y-text_size/2-line_space-line_thick];
+        point2u=[text_x,y+text_y-text_size/2-line_space-line_thick];
+        point2= textpos_y(hole_data)>0 ? point2u:point2d;
+    
+        point3=[text_x+underline_len*dir,point2[1]];
+        point4=[point3[0],point3[1]+line_thick];
+        point5=[point2[0]+line_thick*line_angle_multiplier*dir,point2[1]+line_thick];
+    
+        point6=[x+line_thick*line_angle_multiplier*dir,y+line_thick];
+    
+        points=[point1,point2,point3,point4,point5,point6];
+    //    echo(points)
+    
+        linear_extrude(height=text_depth+1)
+            polygon (points);
+    }
+    
+    difference() {
+        union() {
+            //build gridfinity box
+            translate([-gridx*42/2, -gridy*42/2, 0])
+            gridfinity_base(gridx, gridy, gridz, stacking_lip=enable_lip);
+            
+            //build text and lines
+            translate([-x_center,-y_center-y_min,height_internal]){
+                for (i =[0:len(data)-1]) {
+                    translate([textpos_x(data[i]),textpos_y(data[i]),0])
+                                translate([0,center_pos(data[i][3],data)[1],0])
+                                    linear_extrude(text_depth+1){
+                                        text(data[i][1], size=text_size, valign="center", halign=text_align(textpos_x(data[i])), font=   "Arial:style=Bold");
+                                                }
+                            label_line(center_pos(data[i][3],data),textpos_x(data[i]),textpos_y(data[i]),data[i]);
+                }
+            }
+        }
+
+        //remove cylinders and cut from label line
+        translate([-x_center,-y_center-y_min,(height_internal+5.1)]) {
+            for (i =[0:len(data)-1]) {
+                translate(concat(center_pos(data[i][3],data),-depth))
+                    union() {
+                        cylinder(depth,d=data[i][0]+hole_clearance);
+                        translate([0,0,depth-visual_clearance])
+                            cylinder(text_depth+visual_clearance*2,d=(data[i][0]+line_space*2));
+                    }
+            }
+        }
+    }
 }
+
+socket_organizer();
