@@ -8,8 +8,8 @@ all: $(all_SCAD_FILES)
 	m4 -P $< > $@
 
 .DELETE_ON_ERROR: .deps/%.deps
-.deps/%.m4.deps: %.m4 Makefile
+.deps/%.m4.deps: %.m4 deps.m4 Makefile
 	mkdir -p "$(dir $@)"
-	sed -n -e 's/)m4_dnl//' -e 's/m4_include(/$(<:%.m4=%): /p' $< > $@
+	m4 -P -Dm4_TARGET="$<" deps.m4 $< > $@
 
 -include $(all_TEMPLATES:%=.deps/%.deps)
