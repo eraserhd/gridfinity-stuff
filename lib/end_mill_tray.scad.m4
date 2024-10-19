@@ -1,12 +1,11 @@
-
 m4_include(lib/gridfinity_base.scad.m4)m4_dnl
 
-module end_mill_tray(gridx, gridy, tool_width, minimum_spacing=2.5, angle=30, tool_clearance=0.75, longest_tool, drawer_height) {
-    gridz = 5;
+module end_mill_tray(gridx, gridy, tool_width, minimum_spacing=2.5, angle=30, tool_clearance=0.75, longest_tool, drawer_height, tool_geometry="round") {
+    gridz = 4;
     bottom_height = 5.5;
-    
+    tool_cutout_length = (gridz*7-bottom_height) / sin(angle);
     tool_y_spacing = (tool_width + tool_clearance) / sin(angle) + minimum_spacing;
-    
+
     rows = let (
           tool_length_projection = (gridz*7 - bottom_height) / tan(angle),
           tool_diameter_projection = sin(angle)* (tool_width + tool_clearance),
@@ -18,10 +17,19 @@ module end_mill_tray(gridx, gridy, tool_width, minimum_spacing=2.5, angle=30, to
         (gridx * 42 - minimum_spacing) / (tool_width + tool_clearance + minimum_spacing)
     );
 
+    module shank_cutout() {
+        if (tool_geometry == "round") {
+            cylinder(d=tool_width + tool_clearance, h=tool_cutout_length);
+        } else if (tool_geometry == "square") {
+            translate([0, 0, tool_cutout_length/2])
+            cube([tool_width + tool_clearance, tool_width + tool_clearance, tool_cutout_length], center=true);
+        } else {
+            assert(false, "Unknown tool geometry");
+        }
+    }
 
     module end_mill_cutout() {
         actual_spacing = (gridx * 42 - columns * tool_width) / (columns + 1);
-        cylinder_height = (gridz*7-bottom_height) / sin(angle);
 
         translate([
             0,
@@ -35,7 +43,7 @@ module end_mill_tray(gridx, gridy, tool_width, minimum_spacing=2.5, angle=30, to
                 0,
                 0
             ])
-            cylinder(d=tool_width + tool_clearance, h=cylinder_height);
+            shank_cutout();
 
             translate([
                 actual_spacing + tool_width/2,
@@ -45,7 +53,7 @@ module end_mill_tray(gridx, gridy, tool_width, minimum_spacing=2.5, angle=30, to
             cube([
                  (columns - 1) * tool_width + (columns - 1)*actual_spacing,
                  tool_width/2 + tool_clearance,
-                 cylinder_height,
+                 tool_cutout_length,
             ]);
         }
 
