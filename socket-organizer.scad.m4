@@ -49,7 +49,7 @@ dynamic_spacing=true; //true (no quotes) squeezes rows together as possible, fal
 
 length = 42; //Gridfinity base unit length (default 42, 21 works best for best use of space with default grid pieces)
 
-enable_lip = true; //Whether to add the stacking lip
+enable_lip = false; //Whether to add the stacking lip
 
 hole_clearance=0.75; //oversize holes by this much. and also used for line clearance 
 
