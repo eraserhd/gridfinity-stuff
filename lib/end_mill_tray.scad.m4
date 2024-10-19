@@ -10,7 +10,7 @@ module end_mill_tray(gridx, gridy, tool_width, minimum_spacing=2.5, angle=30, to
           tool_length_projection = (gridz*7 - bottom_height) / tan(angle),
           tool_diameter_projection = sin(angle)* (tool_width + tool_clearance),
           front_space = tool_length_projection + tool_diameter_projection + minimum_spacing,
-          remaining_y = gridy * 42 - front_space
+          remaining_y = gridy * 42 - front_space - minimum_spacing
         ) 1 + floor(remaining_y / tool_y_spacing);
 
     columns = floor(
