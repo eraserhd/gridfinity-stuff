@@ -1,5 +1,3 @@
-//include <gridfinity-rebuilt-utility.scad>
-
 //=============Read me=============//
 /*Original gridfinity utility here: 
 https://www.printables.com/model/274917-gridfinity-rebuilt-in-openscad
@@ -32,13 +30,14 @@ If using 4 wide grid though, pay attention to label output; if you want to read 
 
 //list of hole diameter and string of label. Hole clearance gets added later, so measured diameter goes here. Order of list determines position in grid. 
 holes=[ 
-[19,"8"],[19,"9"],
-[19,"10"],[19,"11"],
-[19,"12"],[20,"13"],
-[22,"14"],[22,"15"],
-[24,"16"],[25,"17"],
-[26,"18"],[27,"19"],
-    ];
+    [ 17.3, "3/8"   ],
+    [ 17.3, "7/16"  ],
+    [ 18.3, "1/2"   ],
+    [   20, "9/16"  ],
+    [   22, "5/8"   ],
+    [ 24.2, "11/16" ],
+    [ 25.6, "3/4"   ],
+];
 
 depth=15; //depth of hole, should not be deeper than depth internal from gridfinity section 
 
@@ -48,7 +47,7 @@ text_primary_side="right"; //Labels on left or right side, also controls Left-to
 
 dynamic_spacing=true; //true (no quotes) squeezes rows together as possible, false  is consistant spacing based on largest hole diameter
 
-length = 21; //Gridfinity base unit length (default 42, 21 works best for best use of space with default grid pieces)
+length = 42; //Gridfinity base unit length (default 42, 21 works best for best use of space with default grid pieces)
 
 height_internal = 20; // gridfinity internal block height of bin (above 5.5mm of bottom grid section)(needs to be taller than depth (hole cut depth)
 
