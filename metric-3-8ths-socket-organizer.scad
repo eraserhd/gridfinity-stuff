@@ -324,7 +324,7 @@ socket_organizer(
         [ 23.4, "17" ],
         [ 25.6, "19" ],
     ],
-    text_primary_side="right",
+    text_primary_side="left",
     depth=15,
     patternx=4,
     dynamic_spacing=true,
