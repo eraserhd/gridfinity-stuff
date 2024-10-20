@@ -329,4 +329,3 @@ socket_organizer(
     enable_lip=false,
     hole_clearance=0.75
 );
-
