@@ -9,7 +9,7 @@ all: $(all_SCAD_FILES) $(all_STL_FILES)
 	m4 -P $< > $@
 
 %.stl: %.scad
-	openscad -o $@ $<
+	openscad -o $@ --export-format binstl $<
 
 .DELETE_ON_ERROR: .deps/%.deps
 .deps/%.m4.deps: %.m4 deps.m4 Makefile
