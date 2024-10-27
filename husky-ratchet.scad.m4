@@ -9,7 +9,7 @@ head_minor_distance = 26;
 drive_flange_diameter = 13.9;
 drive_flange_depth = 11.8;
 
-top_of_head_to_second_handle_diameter = 97;
+top_of_head_to_second_handle_diameter = 97 - 13.5;
 
 m4_include(lib/gridfinity_base.scad.m4)m4_dnl
 
@@ -61,15 +61,15 @@ module cutout() {
 module ratchet_bin() {
     gridz = ceil(1 + (head_thickness/2 + drive_flange_depth + clearance)/7);
     gridx = ceil(head_diameter/42);
-    gridy = 6;
+    gridy = 5;
 
     difference() {
         gridfinity_base(gridx, gridy, gridz, stacking_lip=false);
-        translate([gridx*42/2, 21, gridz*7]) cutout();
-        
+        translate([gridx*42/2, 6.5, gridz*7]) cutout();
+
         hull() {
-           translate([5, 120, gridz*7]) resize([6,25.4,11.8+2*clearance]) sphere(d=11.8+2*clearance);
-           translate([42-5, 120, gridz*7]) resize([6,25.4,11.8+2*clearance]) sphere(d=11.8+2*clearance);
+           translate([5, 92, gridz*7]) resize([6,25.4,11.8+2*clearance]) sphere(d=11.8+2*clearance);
+           translate([42-5, 92, gridz*7]) resize([6,25.4,11.8+2*clearance]) sphere(d=11.8+2*clearance);
         }
     }
 }
