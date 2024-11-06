@@ -1,15 +1,7 @@
-
 $fn = 50;
 
 clearance = 0.5;
-head_diameter = 32.9;
-head_thickness = 14.2;
-head_minor_diameter = 27;
-head_minor_distance = 26;
-drive_flange_diameter = 13.9;
-drive_flange_depth = 11.8;
-
-top_of_head_to_second_handle_diameter = 97 - 13.5;
+length = 220;
 
 // https://files.printables.com/media/prints/417152/pdfs/417152-gridfinity-specification-b1e2cca5-0872-4816-b0ca-5339e5473e13.pdf
 
@@ -105,65 +97,63 @@ module gridfinity_base(
 
 }
 
-module head() {
-    hull() {
-        translate([0,0,-head_thickness/2])
-        cylinder(d=head_diameter + 2*clearance, h=head_thickness);
+module tekton_wrench() {
+    parts = [
+        // diameter, length, from bottom of handle up.
+        [ 22  , 62   ],
+        [ 20  , 5.12 ],
+        [ 23.5, 25   ],
+        [ 18  , 17   ],
+        [ 15.1, 81.3 ],
+    ];
 
-        translate([0, head_minor_distance, -head_thickness/2])
-        cylinder(d=head_minor_diameter + 2*clearance, h=head_thickness);
+    head_large_diameter = 21.5;
+    head_small_diameter = 18.5;
+    head_thickness = 9.6;
+    head_small_diameter_distance = 7.7;
+    head_large_diameter_distance = 7.7 + 11.9;
+    nub_diameter = 8.8;
 
-        translate([0, top_of_head_to_second_handle_diameter - 44, 0])
-        rotate([90,0,0])
-        cylinder(d=13.5 + clearance/2, h=0.1);
-    }
+    module head() {
+        rotate([90, 0, 0]) {
+            translate([0, 0, -head_thickness/2])
+            hull() {
+                translate([0, head_large_diameter_distance, 0])
+                cylinder(d=head_large_diameter, h=head_thickness);
 
-    translate([0, 0, -drive_flange_depth-clearance-head_thickness/2])
-    cylinder(d=drive_flange_diameter + 2*clearance, h=drive_flange_depth+clearance);
-}
+                translate([0, head_small_diameter_distance, 0])
+                cylinder(d=head_small_diameter, h=head_thickness);
+            }
 
-module shaft() {
-    translate([
-       0,
-       top_of_head_to_second_handle_diameter - 44,
-       0
-    ])
-    rotate([-90,0,0])
-    rotate_extrude()
-    polygon(points=[
-        [ 0                  , 139   ],
-        [ 14.2/2 + clearance , 139   ],
-        [ 14.2/2 + clearance , 131.5 ],
-        [ 11.5/2 + clearance , 126.4 ],
-        [ 14.7/2 + clearance , 105   ],
-        [ 15.5/2 + clearance , 49    ],
-        [ 11.2/2 + clearance , 44    ],
-        [ 13.5/2 + clearance , 0     ],
-        [ 0 , 0     ],
-    ]);
-}
-
-module cutout() {
-    translate([0, head_diameter/2 + clearance, 0]) {
-        head();
-        shaft();
-    }
-}
-
-module ratchet_bin() {
-    gridz = ceil(1 + (head_thickness/2 + drive_flange_depth + clearance)/7);
-    gridx = ceil(head_diameter/42);
-    gridy = 5;
-
-    difference() {
-        gridfinity_base(gridx, gridy, gridz, stacking_lip=false);
-        translate([gridx*42/2, 6.5, gridz*7]) cutout();
-
-        hull() {
-           translate([5, 92, gridz*7]) resize([6,25.4,11.8+2*clearance]) sphere(d=11.8+2*clearance);
-           translate([42-5, 92, gridz*7]) resize([6,25.4,11.8+2*clearance]) sphere(d=11.8+2*clearance);
+            translate([0, head_large_diameter_distance, -(18.4 - head_thickness)])
+            cylinder(d=nub_diameter + 2*clearance, h=18.4);
         }
     }
+
+    function offset(n) = n==0 ? 0 : parts[n-1][1] + offset(n-1);
+
+    translate([0, 0, -length/2]) {
+        for (i = [0:len(parts)-1])
+        translate([0, 0, offset(i) - clearance])
+        cylinder(d=parts[i][0] + 2*clearance, h=parts[i][1] + 2*clearance);
+
+        // hole for pin
+        translate([0, 0, offset(len(parts)) - 4.5])
+        rotate([-90,0,0])
+        cylinder(d=5.15, h=15.1+ 2*2.5, center=true); 
+
+        translate([0, 0, offset(len(parts))]) head();
+    }
 }
 
-ratchet_bin();
+module tekton_bin() {
+    gridx = 1;
+    gridy = ceil(length/42);
+    gridz = 3;
+
+    gridfinity_base(gridx, gridy, gridz, stacking_lip=false)
+        rotate([-90, 0, 0])
+            tekton_wrench();
+}
+
+tekton_bin();

@@ -45,10 +45,9 @@ m4_include(lib/gridfinity_base.scad.m4)m4_dnl
 
 module deburring_tool_bin() {
     gridz = 3;
-    difference() {
-        gridfinity_base(1, 4, gridz, stacking_lip=true);
-        translate([21, 10, gridz*7]) children();
-    }
+    gridfinity_base(1, 4, gridz, stacking_lip=true)
+        translate([0, -75, 0])
+            children();
 }
 
 module thumb_relief() {

@@ -66,7 +66,13 @@ jaws_outline = [
 
 // https://files.printables.com/media/prints/417152/pdfs/417152-gridfinity-specification-b1e2cca5-0872-4816-b0ca-5339e5473e13.pdf
 
-module gridfinity_base(gridx, gridy, height, stacking_lip=true, solid_height=undef) {
+module gridfinity_base(
+    gridx,
+    gridy,
+    height,
+    stacking_lip=true,
+    solid_height=undef
+) {
     x_center_offset = (gridx * 42 - 0.5)/2.0 - 3.75;
     y_center_offset = (gridy * 42 - 0.5)/2.0 - 3.75;
     full_width_height = (is_undef(solid_height) ? height*7 : solid_height) - 2.15 - 1.8 - 0.8;
@@ -121,27 +127,35 @@ module gridfinity_base(gridx, gridy, height, stacking_lip=true, solid_height=und
         translate([lip_inset, gridy*42 - lip_inset, height*7]) rotate([0,0,90]) lip_side(gridx);
     }
 
-    for (x = [0:gridx-1])
-        for (y = [0:gridy-1])
-            translate([x*42.0, y*42.0, 0])
-                cell_base();
+    module solid_part() {
+        for (x = [0:gridx-1])
+            for (y = [0:gridy-1])
+                translate([x*42.0, y*42.0, 0])
+                    cell_base();
 
-    base_layer(z=4.75, height=full_width_height, r=outside_radius);
+        base_layer(z=4.75, height=full_width_height, r=outside_radius);
 
-    if (!is_undef(empty_height)) {
-        difference() {
-            base_layer(z=solid_height, height=empty_height, r=outside_radius);
-            base_layer(z=solid_height, height=empty_height+0.1, r=inside_radius);
+        if (!is_undef(empty_height)) {
+            difference() {
+                base_layer(z=solid_height, height=empty_height, r=outside_radius);
+                base_layer(z=solid_height, height=empty_height+0.1, r=inside_radius);
+            }
+        }
+
+        if (stacking_lip) {
+            stacking_lip();
         }
     }
 
-    if (stacking_lip) {
-        stacking_lip();
+    difference() {
+        solid_part();
+        translate([gridx*42/2, gridy*42/2, height*7]) children();
     }
 
     if (!is_undef(solid_height)) {
         empty_height = height - solid_height;
     }
+
 }
 
 module calipers() {
