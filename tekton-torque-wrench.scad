@@ -143,6 +143,13 @@ module tekton_wrench() {
         cylinder(d=5.15, h=15.1+ 2*2.5, center=true); 
 
         translate([0, 0, offset(len(parts))]) head();
+
+        // finger scoop
+        translate([0, 0, 80])
+        hull() {
+            translate([-21+4, 0, 0]) resize([4, 23.5, 25]) sphere(d=25);
+            translate([+21-4, 0, 0]) resize([4, 23.5, 25]) sphere(d=25);
+        }
     }
 }
 
