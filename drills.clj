@@ -157,11 +157,11 @@
    ;; 1x5
    {:name "15/32", :diameter 0.46875, :length 15/2, :bin-columns 5}
    {:name "12mm", :diameter 0.4724409448818898, :length 5.94488188976378, :bin-columns 5}
-   ;; 1x5
    {:name "31/64", :diameter 0.484375, :length 31/4, :bin-columns 5}
-   {:name "12.5mm", :diameter 0.4921259842519685, :length 5.94488188976378}
-   {:name "1/2", :diameter 0.5, :length 31/4, :bin-columns 5}
-   ;; 1x5
-   {:name "13mm", :diameter 0.5118110236220472, :length 5.94488188976378, :bin-columns 5}])
+
+   ;; 2x
+   [{:name "12.5mm", :diameter 0.4921259842519685, :length 5.94488188976378}
+    {:name "1/2", :diameter 0.5, :length 31/4, :bin-columns 5}
+    {:name "13mm", :diameter 0.5118110236220472, :length 5.94488188976378, :bin-columns 5}]])
 
 (println (->> all-drills (map :bin-columns) (reduce +)))
